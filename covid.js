@@ -14,6 +14,7 @@ var json2html = require('html2json').json2html;
 let wholeBody;
 
 let nnth = 0;
+let reconnecting = false;
 
 const resetText ="\x1b[0m";
 const greenText =  "\x1b[32m"+"\x1b[1m";
@@ -315,6 +316,10 @@ function checkForUpdates(){
         let data = '';
 
         resp.on('data', (chunk) => {
+            if(reconnecting){
+                reconnecting = false;
+                console.log(indent0,'reconnected.')
+            }
             data += chunk;
         });
 
@@ -330,6 +335,7 @@ function checkForUpdates(){
         console.log('');
         setTimeout(()=>{
             console.log(indent0,'retrying...');
+            reconnecting = true;
             checkForUpdates();
         },10000);
     });
